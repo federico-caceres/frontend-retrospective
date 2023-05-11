@@ -1,45 +1,52 @@
 import React from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import Tarjeta from '../Tarjeta';
-import { FaThumbsUp } from 'react-icons/fa';
-import { BiCommentDetail } from 'react-icons/bi';
 import { CgColorPicker } from 'react-icons/cg';
-import './styles.css'
+import './styles.css';
+import { useState } from 'react';
 
 function Column(props) {
+  const [descripcion, setDescripcion] = useState('');
+
+  const handleCrearTarjeta = () => {
+    if (descripcion) {
+      props.crearTarjeta(props.id, descripcion);
+      setDescripcion('');
+    }else{
+      alert('Ingrese la descripción de la tarjeta');
+    }
+  };
+
   return (
     <Col className="columna" style={{ margin: 10 }}>
       <h2>{props.name}<CgColorPicker/></h2>
+
+      <Row style={{ height: '10%' }}>
+        <Form style={{ width: '100%' }}>
+          <Form.Group controlId="formDescripcion">
+            <Form.Control
+              type="text"
+              placeholder="Ingrese la descripción de la tarjeta"
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+            />
+            <Button variant="primary" onClick={handleCrearTarjeta}>
+              Crear tarjeta
+            </Button>
+          </Form.Group>
+        </Form>
+      </Row>
       
       <Container style={{ maxHeight: '100vh' }}>
-        <Button variant="primary">Agregar tarjeta</Button>
         {props.tarjetas.map(tarjeta => (
-          <Card key={tarjeta._id} style={{ margin: '10px 0', backgroundColor: props.color }}>
-            <Card.Body>
-              <Card.Title>{tarjeta.description}</Card.Title>
-              <Card.Subtitle className="mb-2 text-muted"> 
-                <Row>
-                  <Col>
-                    <FaThumbsUp />{tarjeta.likes}
-                  </Col>
-                  <Col>
-                    <BiCommentDetail/>{tarjeta.comments.length}
-                  </Col>
-                </Row>
-              </Card.Subtitle>
-              {tarjeta.comments.length > 0 &&
-                <>
-                  <hr />
-                  <Card.Text><strong>Comentarios:</strong></Card.Text>
-                  <ul>
-                    {tarjeta.comments.map((comment, i) => (
-                      <li key={comment._id}>{comment.text}</li>
-                    ))}
-                  </ul>
-                </>
-              }
-            </Card.Body>
-          </Card>
+          <Tarjeta 
+            key={tarjeta._id}
+            id={tarjeta._id}
+            tarjeta={tarjeta} 
+            color={props.color} 
+            eliminarTarjeta={props.eliminarTarjeta}
+            actualizarTarjeta={props.actualizarTarjeta}  
+          />
         ))}
       </Container>
     </Col>
