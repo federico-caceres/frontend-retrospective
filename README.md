@@ -10,7 +10,7 @@ Proyecto final en BootCamp de Make it Real
 
 ### Configuración
 
-- Copiar el archivo `env.example` a `env`
+- Copiar el archivo `env.example` a `.env`
 
 ### Uso
 
