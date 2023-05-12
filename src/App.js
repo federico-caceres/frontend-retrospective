@@ -3,6 +3,7 @@ import { getCategories, getCards, createCard, deleteCard, updateCard, likeCard, 
 import Column from './components/Column';
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
+import './App.css';
 
 function App() 
 {
@@ -58,9 +59,14 @@ function App()
 
   const handleLikeCard = async (cardId) => {
     try {
-      await likeCard(cardId);
-      await updateAllData();
-      socket.emit('updateClient', true);
+      const response = await likeCard(cardId);
+      if(response.success)
+      {
+        await updateAllData();
+        socket.emit('updateClient', true);
+      }else{
+        alert(response.message);
+      }
     } catch (error) {
       console.error('Error al actualizar la tarjeta:', error);
     }
@@ -99,25 +105,24 @@ function App()
 
   
   return (
-    <div>
-      <div className="container-fluid pt-3 principalContainer">
-        <div className="row">
-          {categories.map(category => {
-            const cardsForCategory = tarjetas.filter(card => card.category === category._id);
-            return <Column 
-                  key={category._id} 
-                  id={category._id} 
-                  name={category.name} 
-                  color={category.color} 
-                  tarjetas={cardsForCategory} 
-                  crearTarjeta={handleCreateCard} 
-                  eliminarTarjeta={handleDeleteCard}
-                  actualizarTarjeta={handleUpdateCard}
-                  meGustaTarjeta={handleLikeCard}
-                  actualizarCategoria={handleUpdateCategory}
-                  />;
-          })}
-        </div>
+    <div className="container-fluid pt-3 principalContainer">
+      <div className="row">
+        {categories.map(category => {
+          const cardsForCategory = tarjetas.filter(card => card.category === category._id);
+          return <Column 
+                key={category._id} 
+                id={category._id} 
+                name={category.name} 
+                color={category.color} 
+                tarjetas={cardsForCategory} 
+                crearTarjeta={handleCreateCard} 
+                eliminarTarjeta={handleDeleteCard}
+                actualizarTarjeta={handleUpdateCard}
+                meGustaTarjeta={handleLikeCard}
+                actualizarCategoria={handleUpdateCategory}
+                className="col"
+                />;
+        })}
       </div>
     </div>
   );

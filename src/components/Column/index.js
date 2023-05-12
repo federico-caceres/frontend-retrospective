@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Modal, Button, Form } from 'react-bootstrap';
 import Tarjeta from '../Tarjeta';
 import { CgColorPicker } from 'react-icons/cg';
+import { FaFolderPlus } from 'react-icons/fa';
 import './styles.css';
 import { useState } from 'react';
 import { ChromePicker } from 'react-color';
@@ -32,17 +33,22 @@ function Column(props) {
 
   return (
     <Col className="columna" style={{ margin: 10 }}>
-      <h2>
-        {props.name}
-        <CgColorPicker onClick={handleShowPicker} />
-        <div style={{width: '20px', height: '20px', backgroundColor: selectedColor, marginLeft: '10px'}}></div>
-      </h2>
+
+      <Container>
+        <div style={{display: 'flex', alignItems: 'center'}}>
+          <h2 style={{marginRight: '10px'}}>
+            {props.name}
+          </h2>
+          <div onClick={handleShowPicker} style={{width: '25px', height: '25px', backgroundColor: selectedColor}}></div>
+          <CgColorPicker onClick={handleShowPicker} style={{fontSize: '30px', marginRight: '5px'}} />
+        </div>
+      </Container>
 
       <Modal show={showColorPicker} onHide={() => setShowColorPicker(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Seleccione un color</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className='modalContent'>
           <ChromePicker
             color={selectedColor}
             onChangeComplete={(color) => setSelectedColor(color.hex)}
@@ -58,24 +64,31 @@ function Column(props) {
         </Modal.Footer>
       </Modal>
 
-
-      <Row style={{ height: '10%' }}>
-        <Form style={{ width: '100%' }}>
-          <Form.Group controlId="formDescripcion">
-            <Form.Control
-              type="text"
-              placeholder="Ingrese la descripción de la tarjeta"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-            />
-            <Button variant="primary" onClick={handleCrearTarjeta}>
-              Crear tarjeta
-            </Button>
-          </Form.Group>
-        </Form>
-      </Row>
+      <Container>
+        <Row>
+          <Form style={{ width: '90%' }}>
+            <Form.Group controlId="formDescripcion">
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la descripción de la tarjeta"
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  style={{ marginRight: '10px'}}
+                />
+                <FaFolderPlus 
+                  variant="primary" 
+                  onClick={handleCrearTarjeta}> 
+                  size={80}
+                  style={{ fontSize: '60px', marginLeft: '10px' }}
+                </FaFolderPlus>
+              </div>
+            </Form.Group>
+          </Form>
+        </Row>
+      </Container>
       
-      <Container style={{ maxHeight: '100vh' }}>
+      <Container style={{ maxHeight: '90vh' }}>
         {props.tarjetas.map(tarjeta => (
           <Tarjeta 
             key={tarjeta._id}
