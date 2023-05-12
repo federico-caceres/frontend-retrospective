@@ -10,6 +10,7 @@ function Tarjeta(props)
 
   const [editandoDescripcion, setEditandoDescripcion] = useState(false);
   const [descripcionCard, setDescripcionCard] = useState(props.tarjeta.description);
+  const [nuevoComentario, setNuevoComentario] = useState('');
 
   const handleEditarDescripcion = () => {
     setEditandoDescripcion(true);
@@ -32,19 +33,35 @@ function Tarjeta(props)
     props.eliminarTarjeta(cardId);
   };
 
+  const handleNuevoComentarioChange = (event) => {
+    setNuevoComentario(event.target.value);
+  };
+
+  const handleEnviarComentario = () => {
+    if (nuevoComentario) {
+      props.agregarComentario(props.tarjeta._id, nuevoComentario);
+      setNuevoComentario('');
+    }
+  };
+  
+  
+
   return (
     <div>
         <Card key={props.tarjeta._id} style={{ margin: '10px 0', backgroundColor: props.color }}>
           <Card.Body>
 
           {editandoDescripcion ? (
-            <Form>
+            <Form className='my-2'>
               <Form.Group>
                 <Form.Control type="text" value={descripcionCard} onChange={handleInputChange} />
               </Form.Group>
-              <Button variant="primary" onClick={handleGuardarDescripcion}>Guardar</Button>
-              <Button variant="secondary" onClick={handleCancelarEditarDescripcion}>Cancelar</Button>
+              <div className="d-flex justify-content-center">
+                <Button className='m-2' variant="primary" onClick={handleGuardarDescripcion}>Guardar</Button>
+                <Button className='m-2' variant="secondary" onClick={handleCancelarEditarDescripcion}>Cancelar</Button>
+              </div>
             </Form>
+
           ) : (
             <>
               <Card.Title>{props.tarjeta.description}</Card.Title>
@@ -55,7 +72,7 @@ function Tarjeta(props)
                     {props.tarjeta.likes}
                   </Col>
                   <Col>
-                    <BiCommentDetail className='mx-2'/>
+                  <BiCommentDetail className='mx-2' onClick={() => handleEnviarComentario()} />
                     {props.tarjeta.comments.length}
                   </Col>
                   <Col>
@@ -66,6 +83,8 @@ function Tarjeta(props)
                   </Col>
                 </Row>
               </Card.Subtitle>
+
+
               {props.tarjeta.comments.length > 0 &&
                 <>
                   <hr />
@@ -73,13 +92,22 @@ function Tarjeta(props)
                   <ul>
                     {props.tarjeta.comments.map((comment, i) => (
                       <li key={comment._id}>{comment.text}</li>
-                    ))}
+                      ))}
                   </ul>
                 </>
               }
             
             </>
           )}
+          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <Form.Control 
+              type="text" 
+              placeholder="Agregar comentario" 
+              value={nuevoComentario} 
+              onChange={handleNuevoComentarioChange}
+            />
+            <Button variant="primary" onClick={handleEnviarComentario} style={{ marginLeft: '10px' }}>Enviar</Button>
+          </div>
 
           </Card.Body>
         </Card>

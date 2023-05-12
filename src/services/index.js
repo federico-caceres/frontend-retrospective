@@ -80,3 +80,14 @@ export const likeCard = async (cardId) => {
         return null;
     }
 }
+
+export const addComment = async (cardId, comment) => {
+    try {
+        const commentAdd = { id: cardId, comment: comment };
+        const response = await axios.put(`${API_URL}/card/comment`, commentAdd);
+        return response.data;
+    }catch (error) {
+        console.log(error);
+        return null;
+    }
+}

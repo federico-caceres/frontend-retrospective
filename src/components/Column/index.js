@@ -98,6 +98,7 @@ function Column(props) {
             eliminarTarjeta={props.eliminarTarjeta}
             actualizarTarjeta={props.actualizarTarjeta}  
             meGustaTarjeta={props.meGustaTarjeta}
+            agregarComentario={props.agregarComentario}
           />
         ))}
       </Container>

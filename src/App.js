@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCategories, getCards, createCard, deleteCard, updateCard, likeCard, updateCategory } from './services'
+import { getCategories, getCards, createCard, deleteCard, updateCard, likeCard, updateCategory, addComment } from './services'
 import Column from './components/Column';
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
@@ -103,6 +103,16 @@ function App()
     }
   };
 
+  const agregarComentario = async (cardId, comentario) => {
+    try {
+      await addComment(cardId, comentario);
+      await updateAllData();
+      socket.emit('updateClient', true);
+    } catch (error) {
+      console.error('Error al agregar el comentario:', error);
+    }
+  };
+
   
   return (
     <div className="container-fluid pt-3 principalContainer">
@@ -120,6 +130,7 @@ function App()
                 actualizarTarjeta={handleUpdateCard}
                 meGustaTarjeta={handleLikeCard}
                 actualizarCategoria={handleUpdateCategory}
+                agregarComentario={agregarComentario}
                 className="col"
                 />;
         })}
