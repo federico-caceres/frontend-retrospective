@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
+import { Row, Col, Card, Button, Form } from 'react-bootstrap';
 import { FaThumbsUp } from 'react-icons/fa';
 import { BiCommentDetail } from 'react-icons/bi';
 import { BiEditAlt, BiX } from "react-icons/bi";
@@ -51,13 +51,15 @@ function Tarjeta(props)
               <Card.Subtitle className="mb-2 text-muted"> 
                 <Row>
                   <Col>
-                    <FaThumbsUp className='mx-2' />{props.tarjeta.likes}
+                    <FaThumbsUp className='mx-2' onClick={() => props.meGustaTarjeta(props.tarjeta._id)} />
+                    {props.tarjeta.likes}
                   </Col>
                   <Col>
-                    <BiCommentDetail className='mx-2'/>{props.tarjeta.comments.length}
+                    <BiCommentDetail className='mx-2'/>
+                    {props.tarjeta.comments.length}
                   </Col>
                   <Col>
-                  <BiEditAlt onClick={handleEditarDescripcion} />
+                    <BiEditAlt onClick={handleEditarDescripcion} />
                   </Col>
                   <Col>
                     <BiX onClick={() => handleEliminarTarjeta(props.tarjeta._id)}/>

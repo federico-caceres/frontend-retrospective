@@ -1,22 +1,27 @@
 import React from 'react';
-import { getCategories, getCards, createCard, deleteCard, updateCard } from './services'
+import { getCategories, getCards, createCard, deleteCard, updateCard, likeCard, updateCategory } from './services'
 import Column from './components/Column';
-import Tarjeta from './components/Tarjeta';
-import { Container, Row } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
+import io from 'socket.io-client';
 
 function App() 
 {
   const [categories, setCategories] = useState([]);
   const [tarjetas, setTarjetas] = useState([]);
+  const socket = io.connect(process.env.REACT_APP_API_URL);
 
   useEffect(() => {
     try{
-      async function fetchData() {
-        const categoriesData = await getCategories();
-        setCategories(categoriesData);
-        const cardsData = await getCards();
-        setTarjetas(cardsData);        
+      async function fetchData() 
+      {
+        await updateAllData();  
+        
+        socket.on('connect', () => {
+          console.log('Conexión exitosa con el servidor de socket');
+        });       
+        
+        // escuchamos el evento 'updateServer' para saber si hay que actualizar los datos
+        socket.on('updateServer', handleUpdate);
       }
       fetchData();
     }catch (error) {
@@ -26,9 +31,8 @@ function App()
 
   const handleCreateCard = async (categoryId, description) => {
     try {
-      const newCard = await createCard(categoryId, description);
-      setTarjetas([...tarjetas, newCard]);
-      console.log('Nueva tarjeta creada:', newCard);
+      await createCard(categoryId, description);
+      await updateAllData();
     } catch (error) {
       console.error('Error al crear la tarjeta:', error);
     }
@@ -37,9 +41,7 @@ function App()
   const handleDeleteCard = async (cardId) => {
     try {
       await deleteCard(cardId);
-      const cardsData = await getCards();
-      setTarjetas(cardsData);
-      console.log('Tarjeta eliminada:', cardId);
+      await updateAllData();
     } catch (error) {
       console.error('Error al eliminar la tarjeta:', error);
     }
@@ -47,17 +49,57 @@ function App()
 
   const handleUpdateCard = async (cardId, description) => {
     try {
-      const card = await updateCard(cardId, description);
-      const cardsData = await getCards();
-      setTarjetas(cardsData);
-      console.log('Tarjeta actualizada:', card);
+      await updateCard(cardId, description);
+      await updateAllData();
     } catch (error) {
       console.error('Error al actualizar la tarjeta:', error);
     }
   };
+
+  const handleLikeCard = async (cardId) => {
+    try {
+      await likeCard(cardId);
+      await updateAllData();
+      socket.emit('updateClient', true);
+    } catch (error) {
+      console.error('Error al actualizar la tarjeta:', error);
+    }
+  };
+
+  const handleUpdate = async (data) => {
+    if(data){
+      try {
+          await updateAllData();
+      } catch (error) {
+        console.error('Error al actualizar la datos:', error);
+      }
+    }
+  };
+
+  const handleUpdateCategory = async (categoryId, color) => {
+    try {
+      await updateCategory(categoryId, color);
+      await updateAllData();
+      socket.emit('updateClient', true);
+    } catch (error) {
+      console.error('Error al actualizar la categoría:', error);
+    }
+  };
+
+  const updateAllData = async () => {
+    try {
+      const cardsData = await getCards();
+      setTarjetas(cardsData);
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error('Error al actualizar la datos:', error);
+    }
+  };
+
   
   return (
-    <div style={{ backgroundColor: '#F7F7F7' }}>
+    <div>
       <div className="container-fluid pt-3 principalContainer">
         <div className="row">
           {categories.map(category => {
@@ -71,6 +113,8 @@ function App()
                   crearTarjeta={handleCreateCard} 
                   eliminarTarjeta={handleDeleteCard}
                   actualizarTarjeta={handleUpdateCard}
+                  meGustaTarjeta={handleLikeCard}
+                  actualizarCategoria={handleUpdateCategory}
                   />;
           })}
         </div>

@@ -12,6 +12,18 @@ export const getCategories = async () => {
     }
 }
 
+export const updateCategory = async (categoryId, color) => {
+    try {
+        const categoryUpdate = { id: categoryId, color: color };
+        console.log(categoryUpdate);
+        const response = await axios.put(`${API_URL}/category`, categoryUpdate);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 export const getCards = async () => {
     try {
         const response = await axios.get(`${API_URL}/cards`);
@@ -40,7 +52,6 @@ export const deleteCard = async (cardId) => {
     try {
         const cardDelete = { id: cardId };
         const response = await axios.delete(`${API_URL}/card`, { data: cardDelete });
-        console.log(response.data);
         return response.data;
     }catch (error) {
         console.log(error);
@@ -52,7 +63,17 @@ export const updateCard = async (cardId, description) => {
     try {
         const cardUpdate = { id: cardId, description: description };
         const response = await axios.put(`${API_URL}/card`, cardUpdate);
-        console.log(response.data);
+        return response.data;
+    }catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+export const likeCard = async (cardId) => {
+    try {
+        const cardLike = { id: cardId };
+        const response = await axios.put(`${API_URL}/card/like`, cardLike);
         return response.data;
     }catch (error) {
         console.log(error);
