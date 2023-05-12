@@ -1,6 +1,7 @@
 import React from 'react';
 import { getCategories, getCards, createCard, deleteCard, updateCard, likeCard, updateCategory, addComment } from './services'
 import Column from './components/Column';
+import NavBar from './components/NavBar/';
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import './App.css';
@@ -115,25 +116,28 @@ function App()
 
   
   return (
-    <div className="container-fluid pt-3 principalContainer">
-      <div className="row">
-        {categories.map(category => {
-          const cardsForCategory = tarjetas.filter(card => card.category === category._id);
-          return <Column 
-                key={category._id} 
-                id={category._id} 
-                name={category.name} 
-                color={category.color} 
-                tarjetas={cardsForCategory} 
-                crearTarjeta={handleCreateCard} 
-                eliminarTarjeta={handleDeleteCard}
-                actualizarTarjeta={handleUpdateCard}
-                meGustaTarjeta={handleLikeCard}
-                actualizarCategoria={handleUpdateCategory}
-                agregarComentario={agregarComentario}
-                className="col"
-                />;
-        })}
+    <div className="App">
+      <NavBar></NavBar>
+      <div className="container-fluid pt-3 principalContainer">
+        <div className="row">
+          {categories.map(category => {
+            const cardsForCategory = tarjetas.filter(card => card.category === category._id);
+            return <Column 
+                  key={category._id} 
+                  id={category._id} 
+                  name={category.name} 
+                  color={category.color} 
+                  tarjetas={cardsForCategory} 
+                  crearTarjeta={handleCreateCard} 
+                  eliminarTarjeta={handleDeleteCard}
+                  actualizarTarjeta={handleUpdateCard}
+                  meGustaTarjeta={handleLikeCard}
+                  actualizarCategoria={handleUpdateCategory}
+                  agregarComentario={agregarComentario}
+                  className="col"
+                  />;
+          })}
+        </div>
       </div>
     </div>
   );
